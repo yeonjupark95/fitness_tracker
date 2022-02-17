@@ -50,7 +50,6 @@ async function getUser({ username, password }) {
       return user;
     }
   } catch (error) {
-    console.error(error);
     throw error;
   }
 }
@@ -83,7 +82,6 @@ async function getUserByUsername( username ) {
     );
     return user;
   } catch (error) {
-    console.error(error);
     throw error;
   }
 }

@@ -17,7 +17,7 @@ async function dropTables() {
       DROP TABLE IF EXISTS routine_activities;
       DROP TABLE IF EXISTS routines; 
       DROP TABLE IF EXISTS activities;
-      DROP TABLE IF EXISIS users;
+      DROP TABLE IF EXISTS users;
     `);
     console.log("Finished Dropping All Tables!");
   } catch (error) {
