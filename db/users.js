@@ -55,7 +55,22 @@ async function getUser({ username, password }) {
   }
 }
 
-async function getUserByUsername({ username }) {
+async function getUserById(id) {
+    try{
+      const {rows: [user]} = await client.query(`
+        SELECT *
+        FROM users
+        WHERE id=$1;
+      `,[id]);
+
+      delete user.password;
+      return user;
+    } catch (error){
+      throw error;
+    }
+  }
+
+async function getUserByUsername( username ) {
   try {
     const {
       rows: [user],
@@ -76,5 +91,6 @@ async function getUserByUsername({ username }) {
 module.exports = {
   createUser,
   getUser,
+  getUserById,
   getUserByUsername,
 };
