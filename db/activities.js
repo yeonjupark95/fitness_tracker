@@ -30,11 +30,6 @@ async function getAllAcitivities() {
   }
 }
 
-module.exports = {
-  getActivityById,
-  getAllAcitivities,
-};
-
 async function createActivity({ name, description}) {
     try {
       const {
@@ -58,6 +53,6 @@ async function createActivity({ name, description}) {
 
 module.exports = {
    getActivityById,
-   getAllActivities,
+   getAllAcitivities,
    createActivity,
   };
