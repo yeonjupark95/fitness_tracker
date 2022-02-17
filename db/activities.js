@@ -22,7 +22,7 @@ async function getActivityById(id) {
 async function getAllAcitivities() {
   try {
     const { rows: activities } = await client.query(`
-      SELECT * FROM activities    
+      SELECT * FROM activities;    
     `);
     return activities;
   } catch (error) {
