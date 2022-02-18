@@ -1,50 +1,73 @@
-const  client  = require("./client");
-
+const client = require("./client");
 
 async function getRoutineById(id) {
-    try{
-      const {rows: [routine]} = await client.query(`
+  try {
+    const {
+      rows: [routine],
+    } = await client.query(
+      `
         SELECT *
         FROM routines
         WHERE id=$1;
-      `,[id]);
+      `,
+      [id]
+    );
 
-      delete user.password;
-      return routine;
-    } catch (error){
-      throw error;
-    }
+    delete user.password;
+    return routine;
+  } catch (error) {
+    throw error;
   }
+}
 
-  async function getRoutinesWithoutActivities() {
-    try{
+async function getRoutinesWithoutActivities() {
+  try {
     const { rows: routines } = await client.query(
-        `SELECT *
+      `
+        SELECT *
         FROM routines;
-      `);
-    
-      return routines;
-    }catch (error){
-      throw error;
-    }
-  }
+      `
+    );
 
-  async function getAllRoutines() {
-    try{
-    const { rows: [routine] } = await client.query(
-        `SELECT *
-        FROM routines;
-      `);
-    
-      return routine;
-    }catch (error){
-      throw error;
-    }
+    return routines;
+  } catch (error) {
+    throw error;
   }
+}
 
+async function getAllRoutines() {
+  try {
+    const {
+      rows: [routine],
+    } = await client.query(
+      `
+        SELECT * FROM routines 
+      `
+    );
+
+    return routine;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function getAllPublicRoutines() {
+  try {
+    const {rows: routines} = await client.query(`
+      SELECT * FROM routines
+      WHERE routines."isPublic" = true;
+    `)
+
+    const {rows: activities} = await client.query(`
+    `)
+    return routines;
+  } catch (error) {
+    throw error;
+  }
+}
 
 module.exports = {
-    getRoutineById,
-    getRoutinesWithoutActivities,
-    getAllRoutines,
-  };
+  getRoutineById,
+  getRoutinesWithoutActivities,
+  getAllRoutines,
+};
