@@ -40,7 +40,7 @@ async function createActivity({ name, description }) {
           VALUES ($1, $2)
           ON CONFLICT (name) DO NOTHING
           RETURNING *;
-        `,
+      `,
       [name, description]
     );
 
@@ -50,16 +50,22 @@ async function createActivity({ name, description }) {
   }
 }
 
-async function updateActivity({ id, name, description }) {
+async function updateActivity({ id, ...fields }) {
   try {
+    const setString = Object.keys(fields)
+      .map((field, index) => {
+        return `"${field}"=$${index + 1}`;
+      })
+      .join(", ");
     const {
       row: [activity],
     } = client.query(
       `
       UPDATE activities
-      WHERE id = $1, $2;
+      SET ${setString}
+      WHERE id = ${id};
     `,
-      [name, description]
+      Object.values(fields)
     );
     return activity;
   } catch (error) {
@@ -71,5 +77,5 @@ module.exports = {
   getActivityById,
   getAllAcitivities,
   createActivity,
-  updateActivity
+  updateActivity,
 };
