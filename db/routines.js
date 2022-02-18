@@ -55,7 +55,7 @@ async function getAllPublicRoutines() {
   try {
     const {rows: routines} = await client.query(`
       SELECT * FROM routines
-      WHERE routines."isPublic" = true;
+      WHERE "isPublic" = true;
     `)
 
     const {rows: activities} = await client.query(`
@@ -67,9 +67,22 @@ async function getAllPublicRoutines() {
   }
 }
 
+async function getAllRoutinesByUser({username}) {
+  try {
+    const {rows: routines} = client.query(`
+      SELECT * FROM routines, 
+      WHERE username=$1 AND "isPublic"=true;
+    `, [username])
+    return routines;
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   getRoutineById,
   getRoutinesWithoutActivities,
   getAllRoutines,
   getAllPublicRoutines,
+  getAllRoutinesByUser
 };
