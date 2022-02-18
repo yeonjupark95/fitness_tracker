@@ -51,16 +51,31 @@ async function getAllRoutines() {
   }
 }
 
+// still need to be worked on by Yeonju
 async function getAllPublicRoutines() {
   try {
     const { rows: routines } = await client.query(`
       SELECT * FROM routines
       WHERE "isPublic" = true;
     `);
-
+    
     const { rows: activities } = await client.query(`
-      SELECT * FROM activities
+      SELECT * FROM activities;
     `);
+    
+    return routines;
+  } catch (error) {
+    throw error;
+  }
+}
+
+// need to be checked
+async function getAllRoutinesByUser({username}) {
+  try {
+    const {rows: routines} = client.query(`
+      SELECT * FROM routines, 
+      WHERE username=$1 AND "isPublic"=true;
+    `, [username])
     return routines;
   } catch (error) {
     throw error;
@@ -72,4 +87,5 @@ module.exports = {
   getRoutinesWithoutActivities,
   getAllRoutines,
   getAllPublicRoutines,
+  getAllRoutinesByUser
 };
