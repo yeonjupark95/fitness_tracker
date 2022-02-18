@@ -67,16 +67,9 @@ async function getAllPublicRoutines() {
   }
 }
 
-async function getAllRoutinesByUser() {
-  try {
-
-  } catch (error) {}
-}
-
 module.exports = {
   getRoutineById,
   getRoutinesWithoutActivities,
   getAllRoutines,
   getAllPublicRoutines,
-  getAllRoutinesByUser,
 };
