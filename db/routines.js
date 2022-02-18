@@ -59,6 +59,7 @@ async function getAllPublicRoutines() {
     `)
 
     const {rows: activities} = await client.query(`
+
     `)
     return routines;
   } catch (error) {
@@ -70,4 +71,5 @@ module.exports = {
   getRoutineById,
   getRoutinesWithoutActivities,
   getAllRoutines,
+  getAllPublicRoutines,
 };
