@@ -21,3 +21,5 @@ async function addActivityToRoutine({
     throw error;
   }
 }
+
+module.exports(addActivityToRoutine);
