@@ -61,7 +61,7 @@ async function getAllPublicRoutines() {
   } catch (error) {
     throw error;
   }
-
+}
   async function getAllRoutines() {
     try {
         const { rows: routines} = await client.query(`
