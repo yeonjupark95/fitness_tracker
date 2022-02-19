@@ -58,12 +58,13 @@ async function updateActivity({ id, ...fields }) {
       })
       .join(", ");
     const {
-      row: [activity],
-    } = client.query(
+      rows: [activity]
+    } = await client.query(
       `
       UPDATE activities
       SET ${setString}
-      WHERE id = ${id};
+      WHERE id = ${id}
+      RETURNING *;
     `,
       Object.values(fields)
     );
