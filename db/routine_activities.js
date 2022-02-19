@@ -21,4 +21,22 @@ async function addActivityToRoutine({
   }
 }
 
-module.exports = { addActivityToRoutine };
+async function destroyRoutineActivity(id){
+    try{
+        const {rows:[routine_activity]} = await client.query(
+            `
+            DELETE FROM routine_activities
+            WHERE id = $1
+            RETURNING *;
+        `,[id]
+        );
+        return routine_activity;
+    }   catch (error){
+        throw error;
+    }
+}
+
+module.exports = { 
+    addActivityToRoutine,
+    destroyRoutineActivity,
+ };
