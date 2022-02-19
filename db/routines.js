@@ -160,6 +160,7 @@ async function updateRoutine({ id, ...fields }) {
     );
     return routine;
   } catch (error) {
+    console.error(error)
     throw error;
   }
 }
