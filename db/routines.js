@@ -57,17 +57,18 @@ async function getAllPublicRoutines() {
       SELECT * FROM routines
       WHERE "isPublic" = true;
     `);
-
+    
     const { rows: activities } = await client.query(`
-
+      SELECT * FROM activities;
     `);
+    
     return routines;
   } catch (error) {
     throw error;
   }
 }
 
-async function getAllRoutinesByUser({ username }) {
+async function getAllRoutinesByUser({username}) {
   try {
     const { rows: routines } = client.query(`
       SELECT routines.*, users.username AS "creatorName"
