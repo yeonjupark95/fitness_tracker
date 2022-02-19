@@ -191,6 +191,38 @@ async function destroyRoutine(id) {
   }
 }
 
+async function getPublicRoutinesByUser({ username }){
+    try{
+        const { rows: routines } = await client.query(
+            `
+            SELECT routines.*, users.username AS "creatorName"
+            FROM routines 
+            JOIN users 
+            ON users.id = routines."creatorId"
+            WHERE routines."isPublic" =true
+            AND username = $1;
+          `,
+            [username]
+          );
+
+    const { rows: activities } = await client.query(`
+        SELECT activities.*, routine_activities.duration, routine_activities.count, routine_activities."routineId"
+        FROM activities
+        JOIN routine_activities 
+        ON routine_activities."activityId" = activities.id;
+    `);
+
+        routines.forEach((routine) => {
+        routine.activities = activities.filter(
+        (activity) => routine.id === activity.routineId
+        );
+    });
+
+    return routines;
+    } catch (error) {
+    throw error;
+    }
+}
 module.exports = {
   getRoutineById,
   getRoutinesWithoutActivities,
@@ -200,4 +232,5 @@ module.exports = {
   createRoutine,
   updateRoutine,
   destroyRoutine,
+  getPublicRoutinesByUser,
 };
