@@ -127,13 +127,13 @@ async function getPublicRoutinesByUser({ username }) {
   try {
     const { rows: routines } = await client.query(
       `
-            SELECT routines.*, users.username AS "creatorName"
-            FROM routines 
-            JOIN users 
-            ON users.id = routines."creatorId"
-            WHERE routines."isPublic" = true
-            AND username = $1;
-          `,
+        SELECT routines.*, users.username AS "creatorName"
+        FROM routines 
+        JOIN users 
+        ON users.id = routines."creatorId"
+        WHERE routines."isPublic" = true
+        AND username = $1;
+      `,
       [username]
     );
 
@@ -156,32 +156,45 @@ async function getPublicRoutinesByUser({ username }) {
   }
 }
 
-async function getAllPublicRoutinesByActivity({ id }) {
+async function getPublicRoutinesByActivity({ id }) {
   try {
-    const { rows: routines } = await client.query(`
+    const { rows: routineActivities } = await client.query(
+      `
+      SELECT "routineId"
+      FROM routine_activities
+      WHERE "activityId" = $1;
+    `,
+      [id]
+    );
+
+    const routineActivitiesId = routineActivities.map((routineActivity)=>{
+      return routineActivity.routineId
+    }) 
+ 
+    const { rows: routines } = await client.query(
+      `
       SELECT routines.*, users.username AS "creatorName"
       FROM routines
       JOIN users
       ON users.id = routines."creatorId"
-      WHERE "isPublic" = true;
-    `);
+      WHERE "isPublic" = true AND routines.id IN (${routineActivitiesId});
+    `
+    );
 
     const { rows: activities } = await client.query(`
-        SELECT activities.*, routine_activities.duration, routine_activities.count, routine_activities."routineId" 
-        FROM activities
-        JOIN routine_activities
-        ON routine_activities."activitiyId" = activities.id
-        WHERE id = $1;
-    `,
-      [id]
-    );
+      SELECT activities.*, routine_activities.duration, routine_activities.count, routine_activities."routineId" 
+      FROM activities
+      RIGHT JOIN routine_activities
+      ON routine_activities."activityId" = activities.id
+      WHERE routine_activities."routineId" IN (${routineActivitiesId});
+    `);
 
     routines.forEach((routine) => {
       routine.activities = activities.filter(
         (activity) => routine.id === activity.routineId
       );
     });
-
+    
     return routines;
   } catch (error) {
     throw error;
@@ -263,7 +276,7 @@ module.exports = {
   getAllRoutinesByUser,
   getAllPublicRoutines,
   getPublicRoutinesByUser,
-  getAllPublicRoutinesByActivity,
+  getPublicRoutinesByActivity,
   createRoutine,
   updateRoutine,
   destroyRoutine,
