@@ -22,4 +22,4 @@ async function addActivityToRoutine({
   }
 }
 
-module.exports(addActivityToRoutine);
+module.exports = { addActivityToRoutine };
