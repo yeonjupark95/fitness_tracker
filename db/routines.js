@@ -1,4 +1,5 @@
 const client = require("./client");
+const { destroyRoutineActivity } = require("./routine_activities");
 
 async function getRoutineById(id) {
   try {
@@ -160,7 +161,32 @@ async function updateRoutine({ id, ...fields }) {
     );
     return routine;
   } catch (error) {
-    console.error(error)
+    throw error;
+  }
+}
+
+async function destroyRoutine(id) {
+  try {
+    const {
+      rows: [routine],
+    } = await client.query(
+      `
+      DELETE FROM routines
+      WHERE id=$1
+      RETURNING *;
+   `,
+      [id]
+    );
+
+    await client.query(
+      `
+      DELETE FROM routine_activities
+      WHERE "routineId"=$1;
+   `,
+      [id]
+    );
+    return routine;
+  } catch (error) {
     throw error;
   }
 }
@@ -173,5 +199,5 @@ module.exports = {
   getAllRoutinesByUser,
   createRoutine,
   updateRoutine,
+  destroyRoutine,
 };
-
