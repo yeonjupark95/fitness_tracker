@@ -35,8 +35,23 @@ async function destroyRoutineActivity(id){
         throw error;
     }
 }
+async function getRoutineActivitiesByRoutine({ id }){
+    try{
+        const {rows:routine_activity} = await client.query(
+            `
+            SELECT *
+            FROM routine_activities
+            WHERE "routineId" = $1;
+        `, [id]
+        );
+        return routine_activity;
+    }   catch(error){
+        throw error;
+    }
+}
 
 module.exports = { 
     addActivityToRoutine,
     destroyRoutineActivity,
+    getRoutineActivitiesByRoutine,
  };
