@@ -28,6 +28,12 @@ async function getRoutineById(id) {
         FROM activities
         JOIN routine_activities ON routine_activities."activityId" = activities.id
     `);
+
+        routines.forEach((routine) => {
+        routines.activities = activities.filter(
+            activity => routine.id === activity.routineId
+        );
+      });
     
         return routines;
     }   catch (error){
