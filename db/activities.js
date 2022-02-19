@@ -19,7 +19,7 @@ async function getActivityById(id) {
   }
 }
 
-async function getAllAcitivities() {
+async function getAllActivities() {
   try {
     const { rows: activities } = await client.query(`
       SELECT * FROM activities;    
@@ -75,7 +75,7 @@ async function updateActivity({ id, ...fields }) {
 
 module.exports = {
   getActivityById,
-  getAllAcitivities,
+  getAllActivities,
   createActivity,
   updateActivity,
 };
