@@ -40,7 +40,7 @@ async function getAllRoutines() {
         SELECT routines.*, users.username AS "creatorName"
         FROM routines
         JOIN users 
-        ON routines."creatorId"=users.id
+        ON routines."creatorId"=users.id;
     `);
 
     const { rows: activities } = await client.query(`
@@ -93,7 +93,7 @@ async function getAllPublicRoutines() {
 
 async function getAllRoutinesByUser({ username }) {
   try {
-    const { rows: routines } = client.query(
+    const { rows: routines } = await client.query(
       `
       SELECT routines.*, users.username AS "creatorName"
       FROM routines 
@@ -104,7 +104,7 @@ async function getAllRoutinesByUser({ username }) {
       [username]
     );
 
-    const { rows: activities } = client.query(`
+    const { rows: activities } = await client.query(`
         SELECT activities.*, routine_activities.duration, routine_activities.count, routine_activities."routineId"
         FROM activities
         JOIN routine_activities 
@@ -140,6 +140,30 @@ async function createRoutine({ creatorId, isPublic, name, goal }) {
   }
 }
 
+async function updateRoutine({ id, ...fields }) {
+  try {
+    const setString = Object.keys(fields)
+      .map((field, index) => {
+        return `"${field}"=$${index + 1}`;
+      })
+      .join(", ");
+    const {
+      rows: [routine],
+    } = await client.query(
+      `
+      UPDATE routines
+      SET ${setString}
+      WHERE id = ${id}
+      RETURNING *;
+    `,
+      Object.values(fields)
+    );
+    return routine;
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   getRoutineById,
   getRoutinesWithoutActivities,
@@ -147,4 +171,5 @@ module.exports = {
   getAllPublicRoutines,
   getAllRoutinesByUser,
   createRoutine,
+  updateRoutine,
 };
