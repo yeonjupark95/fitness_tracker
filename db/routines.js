@@ -60,7 +60,7 @@ async function getAllPublicRoutines() {
       ON users.id = routines."creatorId"
       WHERE "isPublic" = true;
     `);
-
+    
     const { rows: activities } = await client.query(`
       SELECT activities.*, routine_activities.duration, routine_activities.count FROM activities
       JOIN routine_activities
@@ -72,7 +72,19 @@ async function getAllPublicRoutines() {
         (activity) => routine.id === activity.routineId
       );
     });
+    
+    return routines;
+  } catch (error) {
+    throw error;
+  }
+}
 
+async function getAllRoutinesByUser({username}) {
+  try {
+    const {rows: routines} = client.query(`
+      SELECT * FROM routines, 
+      WHERE username=$1 AND "isPublic"=true;
+    `, [username])
     return routines;
   } catch (error) {
     throw error;
@@ -84,4 +96,5 @@ module.exports = {
   getRoutinesWithoutActivities,
   getAllRoutines,
   getAllPublicRoutines,
+  getAllRoutinesByUser
 };
