@@ -13,7 +13,6 @@ async function getRoutineById(id) {
       [id]
     );
 
-    delete user.password;
     return routine;
   } catch (error) {
     throw error;
@@ -45,17 +44,17 @@ async function getAllRoutines() {
     `);
 
     const { rows: activities } = await client.query(`
-        SELECT activities.*, routine_activities.duration, routine_activities.count, routine_activities.id AS "routineActivityId", routine_activities."routineId"
+        SELECT activities.*, routine_activities.duration, routine_activities.count, routine_activities."routineId"
         FROM activities
         JOIN routine_activities 
         ON routine_activities."activityId" = activities.id;
     `);
 
-    // routines.forEach((routine) => {
-    //   routines.activities = activities.filter(
-    //     (activity) => routine.id === activity.routineId
-    //   );
-    // });
+    routines.forEach((routine) => {
+      routine.activities = activities.filter(
+        (activity) => routine.id === activity.routineId
+      );
+    });
 
     return routines;
   } catch (error) {
@@ -74,13 +73,14 @@ async function getAllPublicRoutines() {
       `);
 
     const { rows: activities } = await client.query(`
-        SELECT activities.*, routine_activities.duration, routine_activities.count FROM activities
-        JOIN routine_activities
-        ON activities.id = routine_activities."activityId"
+    SELECT activities.*, routine_activities.duration, routine_activities.count, routine_activities."routineId"
+    FROM activities
+    JOIN routine_activities 
+    ON routine_activities."activityId" = activities.id;
       `);
 
     routines.forEach((routine) => {
-      routines.activities = activities.filter(
+      routine.activities = activities.filter(
         (activity) => routine.id === activity.routineId
       );
     });
@@ -105,10 +105,10 @@ async function getAllRoutinesByUser({ username }) {
     );
 
     const { rows: activities } = client.query(`
-      SELECT activities.*, routine_activities.duration, routine_activities.count, routine_activities."routineId"
-      FROM activities
-      JOIN routine_activites
-      ON activities.id = routine_activities."activityId"
+        SELECT activities.*, routine_activities.duration, routine_activities.count, routine_activities."routineId"
+        FROM activities
+        JOIN routine_activities 
+        ON routine_activities."activityId" = activities.id;
     `);
 
     routines.forEach((routine) => {
