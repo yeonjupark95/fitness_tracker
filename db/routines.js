@@ -51,17 +51,27 @@ async function getAllRoutines() {
   }
 }
 
-// still need to be worked on by Yeonju
 async function getAllPublicRoutines() {
   try {
     const { rows: routines } = await client.query(`
-      SELECT * FROM routines
+      SELECT routines.*, users.username AS "creatorName"
+      FROM routines
+      JOIN users
+      ON users.id = routines."creatorId"
       WHERE "isPublic" = true;
     `);
     
     const { rows: activities } = await client.query(`
-      SELECT * FROM activities;
+      SELECT activities.*, routine_activities.duration, routine_activities.count FROM activities
+      JOIN routine_activities
+      ON activities.id = routine_activities."activityId"
     `);
+
+    routines.forEach((routine) => {
+      routines.activities = activities.filter(
+        (activity) => routine.id === activity.routineId
+      );
+    });
     
     return routines;
   } catch (error) {
@@ -69,7 +79,6 @@ async function getAllPublicRoutines() {
   }
 }
 
-// need to be checked
 async function getAllRoutinesByUser({username}) {
   try {
     const {rows: routines} = client.query(`
