@@ -40,20 +40,22 @@ async function getAllRoutines() {
     const { rows: routines } = await client.query(`
         SELECT routines.*, users.username AS "creatorName"
         FROM routines
-        JOIN users ON routines."creatorId"=users.id
+        JOIN users 
+        ON routines."creatorId"=users.id
     `);
 
     const { rows: activities } = await client.query(`
         SELECT activities.*, routine_activities.duration, routine_activities.count, routine_activities.id AS "routineActivityId", routine_activities."routineId"
         FROM activities
-        JOIN routine_activities ON routine_activities."activityId" = activities.id
+        JOIN routine_activities 
+        ON routine_activities."activityId" = activities.id;
     `);
 
-    routines.forEach((routine) => {
-      routines.activities = activities.filter(
-        (activity) => routine.id === activity.routineId
-      );
-    });
+    // routines.forEach((routine) => {
+    //   routines.activities = activities.filter(
+    //     (activity) => routine.id === activity.routineId
+    //   );
+    // });
 
     return routines;
   } catch (error) {
