@@ -35,22 +35,6 @@ async function getRoutinesWithoutActivities() {
   }
 }
 
-async function getAllRoutines() {
-  try {
-    const {
-      rows: [routine],
-    } = await client.query(
-      `
-        SELECT * FROM routines 
-      `
-    );
-
-    return routine;
-  } catch (error) {
-    throw error;
-  }
-}
-
 async function getAllPublicRoutines() {
   try {
     const { rows: routines } = await client.query(`
@@ -77,7 +61,33 @@ async function getAllPublicRoutines() {
   } catch (error) {
     throw error;
   }
-}
+
+  async function getAllRoutines() {
+    try {
+        const { rows: routines} = await client.query(`
+        SELECT routines.*, users.username AS "creatorName"
+        FROM routines
+        JOIN users ON routines."creatorId"=users.id
+    `);
+  
+        const { rows: activities } = await client.query(`
+        SELECT activities.*, routine_activities.duration, routine_activities.count, routine_activities.id AS "routineActivityId", routine_activities."routineId"
+        FROM activities
+        JOIN routine_activities ON routine_activities."activityId" = activities.id
+    `);
+
+        routines.forEach((routine) => {
+        routines.activities = activities.filter(
+            activity => routine.id === activity.routineId
+        );
+      });
+    
+        return routines;
+    }   catch (error){
+        throw error;
+    }
+  }
+
 
 async function getAllRoutinesByUser({username}) {
   try {
