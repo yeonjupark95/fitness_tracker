@@ -93,7 +93,7 @@ async function getAllPublicRoutines() {
 
 async function getAllRoutinesByUser({ username }) {
   try {
-    const { rows: routines } = client.query(
+    const { rows: routines } = await client.query(
       `
       SELECT routines.*, users.username AS "creatorName"
       FROM routines 
@@ -104,7 +104,7 @@ async function getAllRoutinesByUser({ username }) {
       [username]
     );
 
-    const { rows: activities } = client.query(`
+    const { rows: activities } = await client.query(`
         SELECT activities.*, routine_activities.duration, routine_activities.count, routine_activities."routineId"
         FROM activities
         JOIN routine_activities 
