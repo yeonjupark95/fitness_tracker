@@ -96,10 +96,10 @@ async function getAllRoutinesByUser({ username }) {
     const { rows: routines } = client.query(
       `
       SELECT routines.*, users.username AS "creatorName"
-      FROM routines
-      JOIN users
+      FROM routines 
+      JOIN users 
       ON users.id = routines."creatorId"
-      WHERE username = $1
+      WHERE username = $1;
     `,
       [username]
     );
