@@ -1,5 +1,4 @@
 const client = require("./client");
-const { destroyRoutineActivity } = require("./routine_activities");
 
 async function getRoutineById(id) {
   try {
