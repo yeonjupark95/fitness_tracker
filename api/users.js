@@ -2,13 +2,16 @@
 const express = require("express");
 const usersRouter = express.Router();
 const jwt = require("jsonwebtoken");
-const { createUser, getUserByUsername } = require("../db/users");
+const {JWT_SECRET} = process.env;
+const { createUser, getUser, getUserByUsername } = require("../db/users");
+
 // POST /users/register
 // Create a new user. Require username and password, and hash password before saving user to DB. Require all passwords to be at least 8 characters long.
 // Throw errors for duplicate username, or password-too-short.
 usersRouter.post("/register", async (req, res, next) => {
   try {
     const { username, password } = req.body;
+    const user = await createUser(username, password);
     if (password.length < 8) {
       next({
         name: "password-too-short",
@@ -24,9 +27,8 @@ usersRouter.post("/register", async (req, res, next) => {
       });
       return;
     }
-    const user = await createUser(username, password);
     res.send({
-      user
+      user,
     });
   } catch (error) {
     next(error);
