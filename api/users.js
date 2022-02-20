@@ -7,9 +7,8 @@ const { createUser, getUserByUsername } = require("../db/users");
 // Create a new user. Require username and password, and hash password before saving user to DB. Require all passwords to be at least 8 characters long.
 // Throw errors for duplicate username, or password-too-short.
 usersRouter.post("/register", async (req, res, next) => {
-  const { username, password } = req.body;
   try {
-    const user = await createUser(username, password);
+    const { username, password } = req.body;
     if (password.length < 8) {
       next({
         name: "password-too-short",
@@ -25,9 +24,9 @@ usersRouter.post("/register", async (req, res, next) => {
       });
       return;
     }
+    const user = await createUser(username, password);
     res.send({
-      message: "thank you for registering",
-      user,
+      user
     });
   } catch (error) {
     next(error);
