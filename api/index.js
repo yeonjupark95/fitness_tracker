@@ -4,6 +4,14 @@ const apiRouter = express.Router();
 const { JWT_SECRET } = process.env;
 const { getUserById } = require("../db/users");
 
+apiRouter.get("/health", async (req, res, next) => {
+  try {
+    res.send({ message: "all is well" });
+  } catch (error) {
+    next(error);
+  }
+});
+
 apiRouter.use(async (req, res, next) => {
   const prefix = "Bearer ";
   const auth = req.header("Authorization");
@@ -41,9 +49,6 @@ apiRouter.use((req, res, next) => {
   }
   next();
 });
-
-const healthRouter = require("./health");
-apiRouter.use("/health", healthRouter);
 
 const usersRouter = require("./users");
 apiRouter.use("/users", usersRouter);
