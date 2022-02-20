@@ -1,10 +1,18 @@
 // activities
 const express = require("express");
+const { getAllActivities } = require("../db/activities");
 const activitiesRouter = express.Router();
 
 // GET /activities
 // Just return a list of all activities in the database
-
+activitiesRouter.get('/', async(req, res, next) =>{
+    try{
+        const activities = await getAllActivities();
+        res.send({activities});
+        }catch(error){
+        next(error)
+    }
+    });
 // POST /activities (*)
 // Create a new activity
 
