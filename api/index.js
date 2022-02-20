@@ -1,19 +1,14 @@
 const express = require("express");
 const apiRouter = express.Router();
-console.log(hello);
-
-const { JWT_SECRET } = process.env;
 const { getUserById } = require("../db/users");
-
-const healthRouter = require("./health");
-const usersRouter = require("./users");
-const routinesRouter = require("./routines");
-const activitiesRouter = require("./activities");
-const routinesActivitiesRouter = require("./routines_activities");
+const jwt = require("jsonwebtoken");
+const { JWT_SECRET } = process.env;
 
 apiRouter.get("/health", async (req, res, next) => {
   try {
-    res.send({ message: "all is well" });
+    res.send({
+      message: "All is well",
+    });
   } catch (error) {
     next(error);
   }
@@ -22,18 +17,17 @@ apiRouter.get("/health", async (req, res, next) => {
 apiRouter.use(async (req, res, next) => {
   const prefix = "Bearer ";
   const auth = req.header("Authorization");
-
   if (!auth) {
     next();
   } else if (auth.startsWith(prefix)) {
+    // const [ , token] = auth.split(' ')
     const token = auth.slice(prefix.length);
-
     try {
       const { id } = jwt.verify(token, JWT_SECRET);
-
       if (id) {
         req.user = await getUserById(id);
         next();
+        //   console.log("User is set:", req.user);
       }
     } catch ({ name, message }) {
       next({ name, message });
@@ -41,20 +35,28 @@ apiRouter.use(async (req, res, next) => {
   } else {
     next({
       name: "AuthorizationHeaderError",
-      message: `Aurthorization token must start with ${prefix}`,
+      message: `Authorization token must start with ${prefix}`,
     });
   }
+});
+
+apiRouter.use((req, res, next) => {
   if (req.user) {
     console.log("User is set:", req.user);
   }
   next();
 });
 
-apiRouter.use((req, res, next) => {});
-// apiRouter.use("/health", healthRouter);
+const usersRouter = require("./users");
 apiRouter.use("/users", usersRouter);
+
+const routinesRouter = require("./routines");
 apiRouter.use("/routines", routinesRouter);
+
+const activitiesRouter = require("./activities");
 apiRouter.use("/activities", activitiesRouter);
-apiRouter.use("/routinesActivities", routinesActivitiesRouter);
+
+const routines_activitiesRouter = require("./routine_activities");
+apiRouter.use("/routine_activities", routines_activitiesRouter);
 
 module.exports = apiRouter;
