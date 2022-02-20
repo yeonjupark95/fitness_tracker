@@ -4,7 +4,13 @@ const express = require("express");
 const healthRouter = express.Router();
 
 healthRouter.get("/health", async (req, res, next) => {
-  console.log("All is well.");
+  try {
+    res.send({
+      message: "all is well",
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
 module.exports = healthRouter;
