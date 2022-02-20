@@ -4,7 +4,7 @@ const usersRouter = express.Router();
 const jwt = require("jsonwebtoken");
 const {JWT_SECRET} = process.env;
 
-const { getUser} = require("../db/users");
+const { getUserByUsername} = require("../db/users");
 // POST /users/register
 // Create a new user. Require username and password, and hash password before saving user to DB. Require all passwords to be at least 8 characters long.
 
@@ -14,6 +14,7 @@ const { getUser} = require("../db/users");
 // Log in the user. Require username and password, and verify that plaintext login password matches the saved hashed password before returning a JSON Web Token.
 
 // Keep the id and username in the token.
+//still nedds work
 usersRouter.post('/login', async (req, res, next) => {
     const { username, password } = req.body;
 
@@ -25,11 +26,11 @@ usersRouter.post('/login', async (req, res, next) => {
     }
   
     try {
-      const user = await getUser(username, password);
+      const user = await getUserByUsername(username);
   
       if (user && user.password === password) {
 
-        const token = jwt.sign({username: user.username, id: user.id}, JWT_SECRET)
+        const token = jwt.sign({username: username, id: user.id}, JWT_SECRET)
         console.log('token', token)
         res.send({token, message: "you're logged in!" });
       } else {

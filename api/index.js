@@ -1,6 +1,6 @@
 const express = require("express");
 const apiRouter = express.Router();
-const {getUserById} = require('../db')
+const {getUserById} = require('../db/users')
 const jwt = require('jsonwebtoken')
 const {JWT_SECRET} = process.env
 
@@ -31,13 +31,13 @@ apiRouter.use(async(req, res, next) => {
 }
 });
 
-// apiRouter.use((req, res, next) => {
-//     if (req.user) {
-//       console.log("User is set:", req.user);
-//     }
+apiRouter.use((req, res, next) => {
+    if (req.user) {
+      console.log("User is set:", req.user);
+    }
   
-//     next();
-//   });
+    next();
+  });
 
 const usersRouter = require("./users");
 apiRouter.use("/users", usersRouter);
