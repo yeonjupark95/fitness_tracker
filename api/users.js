@@ -1,4 +1,3 @@
-// users
 const express = require("express");
 const usersRouter = express.Router();
 const jwt = require("jsonwebtoken");
@@ -32,10 +31,7 @@ usersRouter.post("/register", async (req, res, next) => {
     next(error);
   }
 });
-// POST /users/login
-// Log in the user. Require username and password, and verify that plaintext login password matches the saved hashed password before returning a JSON Web Token.
-// Keep the id and username in the token.
-//still needs work
+
 usersRouter.post("/login", async (req, res, next) => {
   const { username, password } = req.body;
 
@@ -47,11 +43,10 @@ usersRouter.post("/login", async (req, res, next) => {
   }
 
   try {
-    const user = await getUserByUsername({ username });
+    const user = await getUser(req.body);
 
-    if (user && user.password === password) {
+    if (user) {
       const token = jwt.sign({ username: username, id: user.id }, JWT_SECRET);
-      console.log("token", token);
       res.send({ token, message: "you're logged in!" });
     } else {
       next({
