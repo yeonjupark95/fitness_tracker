@@ -4,6 +4,7 @@ const usersRouter = express.Router();
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = process.env;
 const { createUser, getUser, getUserByUsername } = require("../db/users");
+const { requireUser } = require("./utils");
 
 // POST /users/register
 // Create a new user. Require username and password, and hash password before saving user to DB. Require all passwords to be at least 8 characters long.
@@ -66,6 +67,12 @@ usersRouter.post("/login", async (req, res, next) => {
 });
 // // GET /users/me (*)
 // // Send back the logged-in user's data if a valid token is supplied in the header.
+usersRouter.get('/me', requireUser, async (req, res, next) => {
+  try {
+  } catch (error) {
+      next(error);
+  }
+});
 
 // // GET /users/:username/routines
 // // Get a list of public routines for a particular user.
