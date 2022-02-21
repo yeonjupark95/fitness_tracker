@@ -1,10 +1,8 @@
-// activities
 const express = require("express");
 const activitiesRouter = express.Router();
 const {getAllActivities, createActivity} = require('../db')
 
-// GET /activities
-// Just return a list of all activities in the database
+
 activitiesRouter.get("/", async (req, res, next) => {
     try {
       const activities = await getAllActivities();
@@ -14,12 +12,11 @@ activitiesRouter.get("/", async (req, res, next) => {
       next(error);
     }
   });
-// POST /activities (*)
-// Create a new activity
+
 activitiesRouter.post('/', async(req, res, next) =>{
     const { name, description } = req.body;
     try{
-    const newActivity = await createActivity(req.body)
+    const newActivity = await createActivity({name, description})
     res.send(newActivity)
     }catch(error){
      next(error)   

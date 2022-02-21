@@ -1,9 +1,8 @@
-// routines
-// GET /routines
 const express = require("express");
 const routinesRouter = express.Router();
-const {getAllPublicRoutines} = require('../db/routines')
-// Return a list of public routines, include the activities with them
+const {getAllPublicRoutines, createRoutine} = require('../db/routines')
+const {requireUser} = require('./utils')
+
 routinesRouter.get("/", async (req, res, next) => {
     try {
       const publicRoutines = await getAllPublicRoutines();
@@ -13,9 +12,17 @@ routinesRouter.get("/", async (req, res, next) => {
       next(error);
     }
   });
-// POST /routines (*)
-// Create a new routine
 
+routinesRouter.post('/', async(req, res, next) =>{
+    const { isPublic, name, goal} = req.body;
+  
+    try{
+    const newRoutine = await createRoutine({creatorId:req.user.id, name, isPublic, goal})
+    res.send(newRoutine)
+    }catch(error){
+     next(error)   
+    }
+    });
 // PATCH /routines/:routineId (**)
 // Update a routine, notably change public/private, the name, or the goal
 
