@@ -1,11 +1,13 @@
-// users
 const express = require("express");
 const usersRouter = express.Router();
 const jwt = require("jsonwebtoken");
-const { JWT_SECRET } = process.env;
-const { createUser, getUser, getUserByUsername } = require("../db/users");
-const { requireUser } = require("./utils");
-
+const { JWT_SECRET = "some random string" } = process.env;
+const {
+  createUser,
+  getUser,
+  getUserByUsername,
+  getPublicRoutinesByUser,
+} = require("../db");
 // POST /users/register
 // Create a new user. Require username and password, and hash password before saving user to DB. Require all passwords to be at least 8 characters long.
 // Throw errors for duplicate username, or password-too-short.
@@ -33,26 +35,19 @@ usersRouter.post("/register", async (req, res, next) => {
     next(error);
   }
 });
-// POST /users/login
-// Log in the user. Require username and password, and verify that plaintext login password matches the saved hashed password before returning a JSON Web Token.
-// Keep the id and username in the token.
-//still needs work
+
 usersRouter.post("/login", async (req, res, next) => {
   const { username, password } = req.body;
-
   if (!username || !password) {
     next({
       name: "MissingCredentialsError",
       message: "Please supply both a username and password",
     });
   }
-
   try {
-    const user = await getUserByUsername({ username });
-
-    if (user && user.password === password) {
+    const user = await getUser(req.body);
+    if (user) {
       const token = jwt.sign({ username: username, id: user.id }, JWT_SECRET);
-      console.log("token", token);
       res.send({ token, message: "you're logged in!" });
     } else {
       next({
@@ -67,15 +62,15 @@ usersRouter.post("/login", async (req, res, next) => {
 });
 // // GET /users/me (*)
 // // Send back the logged-in user's data if a valid token is supplied in the header.
-usersRouter.get('/me', requireUser, async (req, res, next) => {
-  try {
-  } catch (error) {
-      next(error);
-  }
-});
-
 // // GET /users/:username/routines
 // // Get a list of public routines for a particular user.
-// module.exports = usersRouter;
-
+usersRouter.get("/:username/routines", async (req, res, next) => {
+  const { username } = req.params;
+  try {
+    const allRoutines = await getPublicRoutinesByUser({ username });
+    res.send(allRoutines);
+  } catch ({ name, message }) {
+    next({ name, message });
+  }
+});
 module.exports = usersRouter;
