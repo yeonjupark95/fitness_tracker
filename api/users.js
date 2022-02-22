@@ -62,6 +62,24 @@ usersRouter.post("/login", async (req, res, next) => {
 });
 // // GET /users/me (*)
 // // Send back the logged-in user's data if a valid token is supplied in the header.
+// need to be fixed
+usersRouter.get("/me", async (req, res, next) => {
+  const prefix = "Bearer ";
+  const auth = req.header("Authorization");
+  try {
+    if (auth) {
+      const token = auth.slice(prefix.length);
+      const user = jwt.verify(token, JWT_SECRET);
+      res.send({ user });
+    } else {
+      return next({
+        message: "You're not logged in",
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+});
 // // GET /users/:username/routines
 // // Get a list of public routines for a particular user.
 usersRouter.get("/:username/routines", async (req, res, next) => {
