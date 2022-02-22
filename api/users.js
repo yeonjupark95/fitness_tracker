@@ -70,7 +70,7 @@ usersRouter.get("/me", async (req, res, next) => {
     if (auth) {
       const token = auth.slice(prefix.length);
       const user = jwt.verify(token, JWT_SECRET);
-      res.send({ user });
+      res.send(user);
     } else {
       return next({
         message: "You're not logged in",
