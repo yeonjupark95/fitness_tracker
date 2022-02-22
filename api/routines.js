@@ -11,6 +11,7 @@ routinesRouter.get("/", async (req, res, next) => {
     next(error);
   }
 });
+
 routinesRouter.post("/", async (req, res, next) => {
   const { isPublic, name, goal } = req.body;
   try {
