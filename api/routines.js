@@ -8,7 +8,7 @@ const {
   getRoutineById,
   destroyRoutine,
 } = require("../db/routines");
-const { addActivityToRoutine } = require("./routine_activities");
+const { addActivityToRoutine } = require("../db/routine_activities");
 const { requireUser } = require("./utils");
 
 routinesRouter.get("/", async (req, res, next) => {
@@ -34,6 +34,7 @@ routinesRouter.post("/", async (req, res, next) => {
     next(error);
   }
 });
+
 // PATCH /routines/:routineId (**)
 // Update a routine, notably change public/private, the name, or the goal
 routinesRouter.patch("/:routineId", requireUser, async (req, res, next) => {
@@ -61,6 +62,8 @@ routinesRouter.patch("/:routineId", requireUser, async (req, res, next) => {
     next(error);
   }
 });
+
+// UNFINISHED
 // DELETE /routines/:routineId (**)
 // Hard delete a routine. Make sure to delete all the routineActivities whose routine is the one being deleted.
 routinesRouter.delete("/:routineId", requireUser, async (res, req, next) => {
@@ -81,6 +84,8 @@ routinesRouter.delete("/:routineId", requireUser, async (res, req, next) => {
     next(error);
   }
 });
+
+// UNFINISHED
 // POST /routines/:routineId/activities
 // Attach a single activity to a routine. Prevent duplication on (routineId, activityId) pair.
 routinesRouter.post(":routineId/activities", async (req, res, next) => {
@@ -98,4 +103,5 @@ routinesRouter.post(":routineId/activities", async (req, res, next) => {
     next(error);
   }
 });
+
 module.exports = routinesRouter;
