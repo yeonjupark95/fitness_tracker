@@ -5,7 +5,6 @@ const { getAllActivities, createActivity, updateActivity } = require("../db");
 activitiesRouter.get("/", async (req, res, next) => {
   try {
     const activities = await getAllActivities();
-
     res.send(activities);
   } catch (error) {
     next(error);
