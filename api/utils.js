@@ -1,9 +1,15 @@
 async function requireUser(req, res, next) {
-  if (!req.user) {
-    next({
-      name: "UserNotLoggedIn",
-      message: "Must be logged in",
-    });
+  try {
+    if (!req.user) {
+      next({
+        name: "UserNotLoggedIn",
+        message: "You must be logged in!",
+      });
+      return;
+    }
+    next();
+  } catch (error) {
+    next(error);
   }
 }
 

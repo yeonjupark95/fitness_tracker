@@ -65,7 +65,7 @@ usersRouter.post("/login", async (req, res, next) => {
 // need to be fixed
 usersRouter.get("/me", async (req, res, next) => {
   const prefix = "Bearer ";
-  const auth = req.header(`Authorization`);
+  const auth = req.header("Authorization");
   try {
     if (auth) {
       const token = auth.slice(prefix.length);

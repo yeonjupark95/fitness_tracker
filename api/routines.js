@@ -1,7 +1,8 @@
 const express = require("express");
 const routinesRouter = express.Router();
-const { getAllPublicRoutines, createRoutine } = require("../db/routines");
+const { getAllPublicRoutines, createRoutine, updateRoutine, getRoutineById } = require("../db/routines");
 const { requireUser } = require("./utils");
+
 routinesRouter.get("/", async (req, res, next) => {
   try {
     const publicRoutines = await getAllPublicRoutines();
@@ -29,6 +30,7 @@ routinesRouter.post("/", async (req, res, next) => {
 routinesRouter.patch("/:routineId", requireUser, async (req, res, next) => {
   const { routineId } = req.params;
   const { isPublic, name, goal } = req.body;
+
   try {
     const routine = await getRoutineById(routineId);
     if (routine.creatorId === req.user.id) {
@@ -38,11 +40,12 @@ routinesRouter.patch("/:routineId", requireUser, async (req, res, next) => {
         name,
         goal,
       });
-      return res.send(updatedRoutine);
+      res.send(updatedRoutine);
+      return;
     } else {
       next({
-        name: "updateRoutine Error",
-        message: "you need to be logged in",
+        name: "updateRoutineError",
+        message: "You must be logged in",
       });
     }
   } catch (error) {
