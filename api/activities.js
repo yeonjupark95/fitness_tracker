@@ -23,14 +23,16 @@ activitiesRouter.post("/", async (req, res, next) => {
 // PATCH /activities/:activityId (*)
 // Anyone can update an activity (yes, this could lead to long term problems a la wikipedia)
 activitiesRouter.patch("/:activityId", async (req, res, next) => {
-  const {activityId} = req.params;
+  const { activityId } = req.params;
   const { name, description } = req.body;
 
   try {
-
-      const newActivity = await updateActivity({id:activityId, name, description});
-      res.send(newActivity)
-
+    const newActivity = await updateActivity({
+      id: activityId,
+      name,
+      description,
+    });
+    res.send(newActivity);
   } catch ({ name, message }) {
     next({ name, message });
   }
