@@ -1,6 +1,6 @@
 const express = require("express");
 const activitiesRouter = express.Router();
-const { getAllActivities, createActivity } = require("../db");
+const { getAllActivities, createActivity, updateActivity } = require("../db");
 
 activitiesRouter.get("/", async (req, res, next) => {
   try {
@@ -22,6 +22,19 @@ activitiesRouter.post("/", async (req, res, next) => {
 });
 // PATCH /activities/:activityId (*)
 // Anyone can update an activity (yes, this could lead to long term problems a la wikipedia)
+activitiesRouter.patch("/:activityId", async (req, res, next) => {
+  const {activityId} = req.params;
+  const { name, description } = req.body;
+
+  try {
+
+      const newActivity = await updateActivity({id:activityId, name, description});
+      res.send(newActivity)
+
+  } catch ({ name, message }) {
+    next({ name, message });
+  }
+});
 
 // GET /activities/:activityId/routines
 // Get a list of all public routines which feature that activity
