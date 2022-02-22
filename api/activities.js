@@ -1,6 +1,6 @@
 const express = require("express");
 const activitiesRouter = express.Router();
-const { getAllActivities, createActivity } = require("../db");
+const { getAllActivities, createActivity, getPublicRoutinesByActivity } = require("../db");
 
 activitiesRouter.get("/", async (req, res, next) => {
   try {
@@ -26,5 +26,17 @@ activitiesRouter.post("/", async (req, res, next) => {
 
 // GET /activities/:activityId/routines
 // Get a list of all public routines which feature that activity
-
+activitiesRouter.get("/:activityId/routines", async (req, res, next) => {
+  
+  const {activityId} = req.params;
+  
+  try {
+    
+    const routines = await getPublicRoutinesByActivity({id:activityId})
+  
+    res.send(routines)
+  } catch ({ name, message }) {
+    next ({name, message});
+  }
+});
 module.exports = activitiesRouter;
