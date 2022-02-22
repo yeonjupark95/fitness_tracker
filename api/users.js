@@ -7,30 +7,30 @@ const { createUser, getUser, getUserByUsername, getPublicRoutinesByUser} = requi
 // POST /users/register
 // Create a new user. Require username and password, and hash password before saving user to DB. Require all passwords to be at least 8 characters long.
 // Throw errors for duplicate username, or password-too-short.
-usersRouter.post("/register", async (req, res, next) => {
-  const { username, password } = req.body;
-  try {
-    if (password.length < 8) {
-      next({
-        name: "passwordLengthError",
-        message: "Password is too short",
-      });
-      return;
-    }
-    const duplicatedUser = await getUserByUsername(username);
-    if (duplicatedUser) {
-      next({
-        name: "duplicatedUserError",
-        message: "Username is already taken",
-      });
-      return;
-    }
-    const user = await createUser({ username, password });
-    res.send({ user });
-  } catch (error) {
-    next(error);
-  }
-});
+// usersRouter.post("/register", async (req, res, next) => {
+//   const { username, password } = req.body;
+//   try {
+//     if (password.length < 8) {
+//       next({
+//         name: "passwordLengthError",
+//         message: "Password is too short",
+//       });
+//       return;
+//     }
+//     const duplicatedUser = await getUserByUsername(username);
+//     if (duplicatedUser) {
+//       next({
+//         name: "duplicatedUserError",
+//         message: "Username is already taken",
+//       });
+//       return;
+//     }
+//     const user = await createUser({ username, password });
+//     res.send({ user });
+//   } catch (error) {
+//     next(error);
+//   }
+// });
 
 usersRouter.post("/login", async (req, res, next) => {
   const { username, password } = req.body;
