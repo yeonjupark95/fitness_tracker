@@ -1,6 +1,6 @@
 const express = require("express");
 const routinesRouter = express.Router();
-const { getAllPublicRoutines, createRoutine, updateRoutine, getRoutineById } = require("../db/routines");
+const { getAllPublicRoutines, createRoutine, updateRoutine, getRoutineById, destroyRoutine } = require("../db");
 const { requireUser } = require("./utils");
 
 routinesRouter.get("/", async (req, res, next) => {
@@ -54,6 +54,17 @@ routinesRouter.patch("/:routineId", requireUser, async (req, res, next) => {
   }
 });
 // DELETE /routines/:routineId (**)
+routinesRouter.delete('/:routineId', async (req, res, next) => {
+  try {
+
+    const {routineId} = req.params;
+    const updatedRoutine = await destroyRoutine(routineId);
+    res.send( updatedRoutine );
+  
+  } catch ({ name, message }) {
+    next({ name, message })
+  }
+});
 // Hard delete a routine. Make sure to delete all the routineActivities whose routine is the one being deleted.
 // POST /routines/:routineId/activities
 // Attach a single activity to a routine. Prevent duplication on (routineId, activityId) pair.
