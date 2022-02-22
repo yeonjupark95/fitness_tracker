@@ -62,27 +62,24 @@ routinesRouter.patch("/:routineId", requireUser, async (req, res, next) => {
 });
 // DELETE /routines/:routineId (**)
 // Hard delete a routine. Make sure to delete all the routineActivities whose routine is the one being deleted.
-routinesRouter.delete(
-  "/routines/:routineId",
-  requireUser,
-  async (res, req, next) => {
-    const { routineId } = req.params;
-    try {
-      const routine = await getRoutineById(routineId);
-      if (routine.creatorId === req.user.id) {
-        const deletedRoutine = await destroyRoutine(routineId);
-        res.send(deletedRoutine);
-      } else {
-        next({
-          name: "deleteUserError",
-          message: "You must be the creator to delete this routine",
-        });
-      }
-    } catch (error) {
-      next(error);
+routinesRouter.delete("/:routineId", requireUser, async (res, req, next) => {
+  const { routineId } = req.params;
+  try {
+    const routine = await getRoutineById(routineId);
+    if (routine.creatorId === req.user.id) {
+      const deletedRoutine = await destroyRoutine(routineId);
+      res.send(deletedRoutine);
+      return;
+    } else {
+      next({
+        name: "deleteCreatorIdError",
+        message: "You must be the creator of this routine",
+      });
     }
+  } catch (error) {
+    next(error);
   }
-);
+});
 // POST /routines/:routineId/activities
 // Attach a single activity to a routine. Prevent duplication on (routineId, activityId) pair.
 module.exports = routinesRouter;
