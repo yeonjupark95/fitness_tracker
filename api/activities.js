@@ -46,9 +46,11 @@ activitiesRouter.patch("/:activityId", async (req, res, next) => {
 // GET /activities/:activityId/routines
 // Get a list of all public routines which feature that activity
 activitiesRouter.get("/:activityId/routines", async (req, res, next) => {
-  const { activityId } = req.params;
   try {
-    const routines = await getPublicRoutinesByActivity({ activityId });
+    const { activityId } = req.params;
+    const routines = await getPublicRoutinesByActivity({
+      id: activityId,
+    });
     res.send(routines);
   } catch (error) {
     next(error);
