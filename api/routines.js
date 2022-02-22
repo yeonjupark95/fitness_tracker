@@ -26,10 +26,25 @@ routinesRouter.post("/", async (req, res, next) => {
 });
 // PATCH /routines/:routineId (**)
 // Update a routine, notably change public/private, the name, or the goal
-routinesRouter.patch("/:routineId", async (req, res, next) => {
+routinesRouter.patch("/:routineId", requireUser, async (req, res, next) => {
+  const { routineId } = req.params;
+  const { isPublic, name, goal } = req.body;
   try {
-    const {routineId} = req.params;
-    const {}
+    const routine = await getRoutineById(routineId);
+    if (routine.creatorId === req.user.id) {
+      const updatedRoutine = await updateRoutine({
+        id: routineId,
+        isPublic,
+        name,
+        goal,
+      });
+      return res.send(updatedRoutine);
+    } else {
+      next({
+        name: "updateRoutine Error",
+        message: "you need to be logged in",
+      });
+    }
   } catch (error) {
     next(error);
   }
