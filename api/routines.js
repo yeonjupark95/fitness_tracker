@@ -8,6 +8,7 @@ const {
   getRoutineById,
   destroyRoutine,
 } = require("../db/routines");
+const { addActivityToRoutine } = require("./routine_activities");
 const { requireUser } = require("./utils");
 
 routinesRouter.get("/", async (req, res, next) => {
@@ -82,4 +83,19 @@ routinesRouter.delete("/:routineId", requireUser, async (res, req, next) => {
 });
 // POST /routines/:routineId/activities
 // Attach a single activity to a routine. Prevent duplication on (routineId, activityId) pair.
+routinesRouter.post(":routineId/activities", async (req, res, next) => {
+  const { routineId } = req.params;
+  const { activityId, count, duration } = req.body;
+  try {
+    const routineActivity = await addActivityToRoutine({
+      routineId,
+      activityId,
+      count,
+      duration,
+    });
+    res.send(routineActivity);
+  } catch (error) {
+    next(error);
+  }
+});
 module.exports = routinesRouter;
