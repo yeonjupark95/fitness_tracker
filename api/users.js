@@ -1,50 +1,51 @@
 const express = require("express");
 const usersRouter = express.Router();
 const jwt = require("jsonwebtoken");
-const { JWT_SECRET } = process.env;
-const { createUser, getUser, getUserByUsername, getPublicRoutinesByUser} = require("../db");
-
+const { JWT_SECRET = "some random string" } = process.env;
+const {
+  createUser,
+  getUser,
+  getUserByUsername,
+  getPublicRoutinesByUser,
+} = require("../db");
 // POST /users/register
 // Create a new user. Require username and password, and hash password before saving user to DB. Require all passwords to be at least 8 characters long.
 // Throw errors for duplicate username, or password-too-short.
-// usersRouter.post("/register", async (req, res, next) => {
-//   const { username, password } = req.body;
-//   try {
-//     if (password.length < 8) {
-//       next({
-//         name: "passwordLengthError",
-//         message: "Password is too short",
-//       });
-//       return;
-//     }
-//     const duplicatedUser = await getUserByUsername(username);
-//     if (duplicatedUser) {
-//       next({
-//         name: "duplicatedUserError",
-//         message: "Username is already taken",
-//       });
-//       return;
-//     }
-//     const user = await createUser({ username, password });
-//     res.send({ user });
-//   } catch (error) {
-//     next(error);
-//   }
-// });
+usersRouter.post("/register", async (req, res, next) => {
+  const { username, password } = req.body;
+  try {
+    if (password.length < 8) {
+      next({
+        name: "passwordLengthError",
+        message: "Password is too short",
+      });
+      return;
+    }
+    const duplicatedUser = await getUserByUsername(username);
+    if (duplicatedUser) {
+      next({
+        name: "duplicatedUserError",
+        message: "Username is already taken",
+      });
+      return;
+    }
+    const user = await createUser({ username, password });
+    res.send({ user });
+  } catch (error) {
+    next(error);
+  }
+});
 
 usersRouter.post("/login", async (req, res, next) => {
   const { username, password } = req.body;
-
   if (!username || !password) {
     next({
       name: "MissingCredentialsError",
       message: "Please supply both a username and password",
     });
   }
-
   try {
     const user = await getUser(req.body);
-
     if (user) {
       const token = jwt.sign({ username: username, id: user.id }, JWT_SECRET);
       res.send({ token, message: "you're logged in!" });
@@ -61,21 +62,15 @@ usersRouter.post("/login", async (req, res, next) => {
 });
 // // GET /users/me (*)
 // // Send back the logged-in user's data if a valid token is supplied in the header.
-
 // // GET /users/:username/routines
 // // Get a list of public routines for a particular user.
-usersRouter.get('/:username/routines', async (req, res, next) => {
-  
-  const {username} = req.params;
-  
+usersRouter.get("/:username/routines", async (req, res, next) => {
+  const { username } = req.params;
   try {
-    
-    const allRoutines = await getPublicRoutinesByUser({username})
-  
-    res.send(allRoutines)
+    const allRoutines = await getPublicRoutinesByUser({ username });
+    res.send(allRoutines);
   } catch ({ name, message }) {
-    next ({name, message});
+    next({ name, message });
   }
 });
-
 module.exports = usersRouter;
