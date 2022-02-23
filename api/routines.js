@@ -77,21 +77,20 @@ routinesRouter.delete("/:routineId", async (req, res, next) => {
 
 // POST /routines/:routineId/activities
 // Attach a single activity to a routine. Prevent duplication on (routineId, activityId) pair.
-routinesRouter.post( "/:routineId/activities", async (req, res, next) => {
-    try {
-      const { routineId } = req.params;
-      const { activityId, count, duration } = req.body;
-      const routineActivity = await addActivityToRoutine({
-        routineId,
-        activityId,
-        count,
-        duration,
-      });
-      res.send(routineActivity);
-    } catch (error) {
-      next(error);
-    }
+routinesRouter.post("/:routineId/activities", async (req, res, next) => {
+  try {
+    const { routineId } = req.params;
+    const { activityId, count, duration } = req.body;
+    const routineActivity = await addActivityToRoutine({
+      routineId,
+      activityId,
+      count,
+      duration,
+    });
+    res.send(routineActivity);
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 module.exports = routinesRouter;
