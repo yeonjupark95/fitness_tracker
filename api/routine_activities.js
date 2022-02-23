@@ -15,14 +15,12 @@ routines_activitiesRouter.patch(
   requireUser,
   async (req, res, next) => {
     const { routineActivityId } = req.params;
-    const { count, duration } = req.body;
-
+    
     try {
-      const routineActivity = await getRoutineActivityById({
-        routineActivityId: id,
-      });
+      const routineActivity = await getRoutineActivityById(routineActivityId);
       const routine = await getRoutineById(routineActivity.routineId);
       if (routine.creatorId === req.user.id) {
+        const { count, duration } = req.body;
         const updatedRoutineActivity = await updateRoutineActivity({
           id: routineActivityId,
           count,
@@ -69,4 +67,5 @@ routines_activitiesRouter.delete(
     }
   }
 );
+
 module.exports = routines_activitiesRouter;
