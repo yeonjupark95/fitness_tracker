@@ -65,6 +65,17 @@ routinesRouter.patch("/:routineId", requireUser, async (req, res, next) => {
 
 
 // DELETE /routines/:routineId (**)
+routinesRouter.delete('/:routineId', async (req, res, next) => {
+  try {
+
+    const {routineId} = req.params;
+    const updatedRoutine = await destroyRoutine(routineId);
+    res.send( updatedRoutine );
+  
+  } catch ({ name, message }) {
+    next({ name, message })
+  }
+});
 // Hard delete a routine. Make sure to delete all the routineActivities whose routine is the one being deleted.
 
 
