@@ -3,7 +3,7 @@ const express = require("express");
 const { getRoutineById } = require("../db/routines");
 const {
   updateRoutineActivity,
-  getRoutineActivitiesByRoutine,
+  getRoutineActivityById,
   destroyRoutineActivity,
 } = require("../db/routine_activities");
 const { requireUser } = require("./utils");
@@ -18,10 +18,10 @@ routines_activitiesRouter.patch(
     const { count, duration } = req.body;
 
     try {
-      const routineActivity = await getRoutineActivitiesByRoutine({
-        id: routineActivityId,
+      const routineActivity = await getRoutineActivityById({
+        routineActivityId: id,
       });
-      const routine = await getRoutineById(routineActivity.creatorId);
+      const routine = await getRoutineById(routineActivity.routineId);
       if (routine.creatorId === req.user.id) {
         const updatedRoutineActivity = await updateRoutineActivity({
           id: routineActivityId,
@@ -50,13 +50,14 @@ routines_activitiesRouter.delete(
   async (req, res, next) => {
     try {
       const { routineActivityId } = req.params;
-      const routineActivity = await getRoutineById(routineActivityId);
+      const routineActivity = await getRoutineActivityById(routineActivityId);
       const routine = await getRoutineById(routineActivity.routineId);
-      if ((routine.creatorId = req.user.id)) {
+      if (routine.creatorId === req.user.id) {
         const deletedRoutineAcitivity = await destroyRoutineActivity(
           routineActivityId
         );
         res.send(deletedRoutineAcitivity);
+        return;
       } else {
         next({
           name: "routineActivityDeleteError",
