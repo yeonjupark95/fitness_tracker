@@ -63,25 +63,35 @@ routinesRouter.patch("/:routineId", requireUser, async (req, res, next) => {
   }
 });
 
-
 // DELETE /routines/:routineId (**)
-routinesRouter.delete('/:routineId', async (req, res, next) => {
+// Hard delete a routine. Make sure to delete all the routineActivities whose routine is the one being deleted.
+routinesRouter.delete("/:routineId", async (req, res, next) => {
   try {
-
-    const {routineId} = req.params;
+    const { routineId } = req.params;
     const updatedRoutine = await destroyRoutine(routineId);
-    res.send( updatedRoutine );
-  
+    res.send(updatedRoutine);
   } catch ({ name, message }) {
-    next({ name, message })
+    next({ name, message });
   }
 });
-// Hard delete a routine. Make sure to delete all the routineActivities whose routine is the one being deleted.
-
-
 
 // POST /routines/:routineId/activities
 // Attach a single activity to a routine. Prevent duplication on (routineId, activityId) pair.
-
+routinesRouter.post( "/:routineId/activities", async (req, res, next) => {
+    try {
+      const { routineId } = req.params;
+      const { activityId, count, duration } = req.body;
+      const routineActivity = await addActivityToRoutine({
+        routineId,
+        activityId,
+        count,
+        duration,
+      });
+      res.send(routineActivity);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 module.exports = routinesRouter;
