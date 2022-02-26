@@ -6,6 +6,7 @@ const {
   updateActivity,
   getPublicRoutinesByActivity,
 } = require("../db");
+const { requireUser } = require("./utils");
 
 activitiesRouter.get("/", async (req, res, next) => {
   try {
@@ -16,7 +17,7 @@ activitiesRouter.get("/", async (req, res, next) => {
   }
 });
 
-activitiesRouter.post("/", async (req, res, next) => {
+activitiesRouter.post("/", requireUser, async (req, res, next) => {
   const { name, description } = req.body;
   try {
     const newActivity = await createActivity({ name, description });
@@ -27,7 +28,7 @@ activitiesRouter.post("/", async (req, res, next) => {
 });
 // PATCH /activities/:activityId (*)
 // Anyone can update an activity (yes, this could lead to long term problems a la wikipedia)
-activitiesRouter.patch("/:activityId", async (req, res, next) => {
+activitiesRouter.patch("/:activityId", requireUser, async (req, res, next) => {
   const { activityId } = req.params;
   const { name, description } = req.body;
 

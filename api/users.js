@@ -8,6 +8,7 @@ const {
   getUserByUsername,
   getPublicRoutinesByUser,
 } = require("../db");
+const { requireUser } = require("./utils");
 
 // POST /users/register
 usersRouter.post("/register", async (req, res, next) => {
@@ -61,7 +62,7 @@ usersRouter.post("/login", async (req, res, next) => {
 });
 
 // // GET /users/me (*)
-usersRouter.get("/me", async (req, res, next) => {
+usersRouter.get("/me", requireUser, async (req, res, next) => {
   const prefix = "Bearer ";
   const auth = req.header("Authorization");
   try {
