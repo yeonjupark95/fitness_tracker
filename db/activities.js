@@ -21,8 +21,9 @@ async function getActivityById(id) {
 
 async function getAllActivities() {
   try {
-    const { rows: activities } = await client.query(`
-      SELECT * FROM activities;    
+    const { rows: activities } = await client.query(
+      `
+        SELECT * FROM activities;    
     `);
     return activities;
   } catch (error) {
@@ -36,10 +37,10 @@ async function createActivity({ name, description }) {
       rows: [activity],
     } = await client.query(
       `
-          INSERT INTO activities(name, description) 
-          VALUES ($1, $2)
-          ON CONFLICT (name) DO NOTHING
-          RETURNING *;
+        INSERT INTO activities(name, description) 
+        VALUES ($1, $2)
+        ON CONFLICT (name) DO NOTHING
+        RETURNING *;
       `,
       [name, description]
     );
@@ -61,11 +62,11 @@ async function updateActivity({ id, ...fields }) {
       rows: [activity]
     } = await client.query(
       `
-      UPDATE activities
-      SET ${setString}
-      WHERE id = ${id}
-      RETURNING *;
-    `,
+        UPDATE activities
+        SET ${setString}
+        WHERE id = ${id}
+        RETURNING *;
+      `,
       Object.values(fields)
     );
     return activity;

@@ -71,9 +71,9 @@ async function destroyRoutineActivity(id) {
       rows: [routineActivity],
     } = await client.query(
         `
-            DELETE FROM routine_activities
-            WHERE id = $1
-            RETURNING *;
+          DELETE FROM routine_activities
+          WHERE id = $1
+          RETURNING *;
         `,
       [id]
     );
