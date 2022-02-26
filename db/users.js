@@ -1,4 +1,4 @@
-const  client  = require("./client");
+const client  = require("./client");
 const bcrypt = require("bcrypt");
 const SALT_ROUNDS = 10;
 
@@ -56,7 +56,8 @@ async function getUser({ username, password }) {
 
 async function getUserById(id) {
     try{
-      const {rows: [user]} = await client.query(`
+      const {rows: [user]} = await client.query(
+      `
         SELECT *
         FROM users
         WHERE id=$1;
