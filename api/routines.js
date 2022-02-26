@@ -35,8 +35,6 @@ routinesRouter.post("/", requireUser,async (req, res, next) => {
   }
 });
 
-// PATCH /routines/:routineId (**)
-// Update a routine, notably change public/private, the name, or the goal
 routinesRouter.patch("/:routineId", requireUser, async (req, res, next) => {
   const { routineId } = req.params;
   const { isPublic, name, goal } = req.body;
@@ -63,8 +61,6 @@ routinesRouter.patch("/:routineId", requireUser, async (req, res, next) => {
   }
 });
 
-// DELETE /routines/:routineId (**)
-// Hard delete a routine. Make sure to delete all the routineActivities whose routine is the one being deleted.
 routinesRouter.delete("/:routineId", requireUser, async (req, res, next) => {
   try {
     const { routineId } = req.params;

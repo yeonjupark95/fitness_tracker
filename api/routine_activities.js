@@ -1,4 +1,3 @@
-// routine_activities
 const express = require("express");
 const { getRoutineById } = require("../db/routines");
 const {
@@ -9,7 +8,6 @@ const {
 const { requireUser } = require("./utils");
 const routines_activitiesRouter = express.Router();
 
-// PATCH /routine_activities/:routineActivityId (**)
 routines_activitiesRouter.patch(
   "/:routineActivityId",
   requireUser,
@@ -40,7 +38,6 @@ routines_activitiesRouter.patch(
   }
 );
 
-// DELETE /routine_activities/:routineActivityId (**)
 routines_activitiesRouter.delete(
   "/:routineActivityId",
   requireUser,
