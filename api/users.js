@@ -10,7 +10,6 @@ const {
 } = require("../db");
 const { requireUser } = require("./utils");
 
-// POST /users/register
 usersRouter.post("/register", async (req, res, next) => {
   const { username, password } = req.body;
   try {
@@ -61,7 +60,6 @@ usersRouter.post("/login", async (req, res, next) => {
   }
 });
 
-// // GET /users/me (*)
 usersRouter.get("/me", requireUser, async (req, res, next) => {
   const prefix = "Bearer ";
   const auth = req.header("Authorization");
@@ -79,8 +77,7 @@ usersRouter.get("/me", requireUser, async (req, res, next) => {
     next(error);
   }
 });
-// // GET /users/:username/routines
-// // Get a list of public routines for a particular user.
+
 usersRouter.get("/:username/routines", async (req, res, next) => {
   const { username } = req.params;
   try {

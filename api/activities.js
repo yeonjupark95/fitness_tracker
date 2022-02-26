@@ -26,8 +26,7 @@ activitiesRouter.post("/", requireUser, async (req, res, next) => {
     next(error);
   }
 });
-// PATCH /activities/:activityId (*)
-// Anyone can update an activity (yes, this could lead to long term problems a la wikipedia)
+
 activitiesRouter.patch("/:activityId", requireUser, async (req, res, next) => {
   const { activityId } = req.params;
   const { name, description } = req.body;
@@ -44,8 +43,6 @@ activitiesRouter.patch("/:activityId", requireUser, async (req, res, next) => {
   }
 });
 
-// GET /activities/:activityId/routines
-// Get a list of all public routines which feature that activity
 activitiesRouter.get("/:activityId/routines", async (req, res, next) => {
   try {
     const { activityId } = req.params;
