@@ -34,6 +34,27 @@ async function getRoutinesWithoutActivities() {
   }
 }
 
+const addActivitiestoRoutines = async (routines) => {
+  try{
+  const { rows: activities } = await client.query(
+    `
+      SELECT activities.*, routine_activities.duration, routine_activities.count, routine_activities."routineId", routine_activities.id AS "routineActivityId"
+      FROM activities
+      JOIN routine_activities 
+      ON routine_activities."activityId" = activities.id;
+   `);
+
+  routines.forEach((routine) => {
+    routine.activities = activities.filter(
+      (activity) => routine.id === activity.routineId
+    );
+  });
+
+  return routines;
+}catch(error){
+  throw error
+}
+}
 async function getAllRoutines() {
   try {
     const { rows: routines } = await client.query(
@@ -44,21 +65,7 @@ async function getAllRoutines() {
         ON routines."creatorId"=users.id;
       `);
 
-    const { rows: activities } = await client.query(
-      `
-        SELECT activities.*, routine_activities.duration, routine_activities.count, routine_activities."routineId"
-        FROM activities
-        JOIN routine_activities 
-        ON routine_activities."activityId" = activities.id;
-     `);
-
-    routines.forEach((routine) => {
-      routine.activities = activities.filter(
-        (activity) => routine.id === activity.routineId
-      );
-    });
-
-    return routines;
+    return await addActivitiestoRoutines(routines)
   } catch (error) {
     throw error;
   }
@@ -75,21 +82,7 @@ async function getAllPublicRoutines() {
         WHERE "isPublic" = true;
       `);
 
-    const { rows: activities } = await client.query(
-      `
-        SELECT activities.*, routine_activities.duration, routine_activities.count, routine_activities."routineId"
-        FROM activities
-        JOIN routine_activities 
-        ON routine_activities."activityId" = activities.id;
-      `);
-
-    routines.forEach((routine) => {
-      routine.activities = activities.filter(
-        (activity) => routine.id === activity.routineId
-      );
-    });
-
-    return routines;
+    return await addActivitiestoRoutines(routines)
   } catch (error) {
     throw error;
   }
@@ -108,20 +101,7 @@ async function getAllRoutinesByUser({ username }) {
       [username]
     );
 
-    const { rows: activities } = await client.query(
-      `
-        SELECT activities.*, routine_activities.duration, routine_activities.count, routine_activities."routineId"
-        FROM activities
-        JOIN routine_activities 
-        ON routine_activities."activityId" = activities.id;
-      `);
-
-    routines.forEach((routine) => {
-      routine.activities = activities.filter(
-        (activity) => routine.id === activity.routineId
-      );
-    });
-    return routines;
+    return await addActivitiestoRoutines(routines)
   } catch (error) {
     throw error;
   }
@@ -141,21 +121,7 @@ async function getPublicRoutinesByUser({ username }) {
       [username]
     );
 
-    const { rows: activities } = await client.query(
-      `
-        SELECT activities.*, routine_activities.duration, routine_activities.count, routine_activities."routineId"
-        FROM activities
-        JOIN routine_activities 
-        ON routine_activities."activityId" = activities.id;
-      `);
-
-    routines.forEach((routine) => {
-      routine.activities = activities.filter(
-        (activity) => routine.id === activity.routineId
-      );
-    });
-
-    return routines;
+    return await addActivitiestoRoutines(routines)
   } catch (error) {
     throw error;
   }
@@ -185,23 +151,8 @@ async function getPublicRoutinesByActivity({ id }) {
         WHERE "isPublic" = true AND routines.id IN (${routineActivitiesId});
       `
     );
-
-    const { rows: activities } = await client.query(
-      `
-        SELECT activities.*, routine_activities.duration, routine_activities.count, routine_activities."routineId" 
-        FROM activities
-        RIGHT JOIN routine_activities
-        ON routine_activities."activityId" = activities.id
-        WHERE routine_activities."routineId" IN (${routineActivitiesId});
-      `);
-
-    routines.forEach((routine) => {
-      routine.activities = activities.filter(
-        (activity) => routine.id === activity.routineId
-      );
-    });
     
-    return routines;
+    return await addActivitiestoRoutines(routines)
   } catch (error) {
     throw error;
   }
