@@ -36,19 +36,21 @@ async function getRoutinesWithoutActivities() {
 
 async function getAllRoutines() {
   try {
-    const { rows: routines } = await client.query(`
+    const { rows: routines } = await client.query(
+      `
         SELECT routines.*, users.username AS "creatorName"
         FROM routines
         JOIN users 
         ON routines."creatorId"=users.id;
-    `);
+      `);
 
-    const { rows: activities } = await client.query(`
+    const { rows: activities } = await client.query(
+      `
         SELECT activities.*, routine_activities.duration, routine_activities.count, routine_activities."routineId"
         FROM activities
         JOIN routine_activities 
         ON routine_activities."activityId" = activities.id;
-    `);
+     `);
 
     routines.forEach((routine) => {
       routine.activities = activities.filter(
@@ -64,7 +66,8 @@ async function getAllRoutines() {
 
 async function getAllPublicRoutines() {
   try {
-    const { rows: routines } = await client.query(`
+    const { rows: routines } = await client.query(
+      `
         SELECT routines.*, users.username AS "creatorName"
         FROM routines
         JOIN users
@@ -72,11 +75,12 @@ async function getAllPublicRoutines() {
         WHERE "isPublic" = true;
       `);
 
-    const { rows: activities } = await client.query(`
-    SELECT activities.*, routine_activities.duration, routine_activities.count, routine_activities."routineId"
-    FROM activities
-    JOIN routine_activities 
-    ON routine_activities."activityId" = activities.id;
+    const { rows: activities } = await client.query(
+      `
+        SELECT activities.*, routine_activities.duration, routine_activities.count, routine_activities."routineId"
+        FROM activities
+        JOIN routine_activities 
+        ON routine_activities."activityId" = activities.id;
       `);
 
     routines.forEach((routine) => {
@@ -95,21 +99,22 @@ async function getAllRoutinesByUser({ username }) {
   try {
     const { rows: routines } = await client.query(
       `
-      SELECT routines.*, users.username AS "creatorName"
-      FROM routines 
-      JOIN users 
-      ON users.id = routines."creatorId"
-      WHERE username = $1;
-    `,
+        SELECT routines.*, users.username AS "creatorName"
+        FROM routines 
+        JOIN users 
+        ON users.id = routines."creatorId"
+        WHERE username = $1;
+      `,
       [username]
     );
 
-    const { rows: activities } = await client.query(`
+    const { rows: activities } = await client.query(
+      `
         SELECT activities.*, routine_activities.duration, routine_activities.count, routine_activities."routineId"
         FROM activities
         JOIN routine_activities 
         ON routine_activities."activityId" = activities.id;
-    `);
+      `);
 
     routines.forEach((routine) => {
       routine.activities = activities.filter(
@@ -136,12 +141,13 @@ async function getPublicRoutinesByUser({ username }) {
       [username]
     );
 
-    const { rows: activities } = await client.query(`
+    const { rows: activities } = await client.query(
+      `
         SELECT activities.*, routine_activities.duration, routine_activities.count, routine_activities."routineId"
         FROM activities
         JOIN routine_activities 
         ON routine_activities."activityId" = activities.id;
-    `);
+      `);
 
     routines.forEach((routine) => {
       routine.activities = activities.filter(
@@ -159,10 +165,10 @@ async function getPublicRoutinesByActivity({ id }) {
   try {
     const { rows: routineActivities } = await client.query(
       `
-      SELECT "routineId"
-      FROM routine_activities
-      WHERE "activityId" = $1;
-    `,
+        SELECT "routineId"
+        FROM routine_activities
+        WHERE "activityId" = $1;
+      `,
       [id]
     );
 
@@ -172,21 +178,22 @@ async function getPublicRoutinesByActivity({ id }) {
  
     const { rows: routines } = await client.query(
       `
-      SELECT routines.*, users.username AS "creatorName"
-      FROM routines
-      JOIN users
-      ON users.id = routines."creatorId"
-      WHERE "isPublic" = true AND routines.id IN (${routineActivitiesId});
-    `
+        SELECT routines.*, users.username AS "creatorName"
+        FROM routines
+        JOIN users
+        ON users.id = routines."creatorId"
+        WHERE "isPublic" = true AND routines.id IN (${routineActivitiesId});
+      `
     );
 
-    const { rows: activities } = await client.query(`
-      SELECT activities.*, routine_activities.duration, routine_activities.count, routine_activities."routineId" 
-      FROM activities
-      RIGHT JOIN routine_activities
-      ON routine_activities."activityId" = activities.id
-      WHERE routine_activities."routineId" IN (${routineActivitiesId});
-    `);
+    const { rows: activities } = await client.query(
+      `
+        SELECT activities.*, routine_activities.duration, routine_activities.count, routine_activities."routineId" 
+        FROM activities
+        RIGHT JOIN routine_activities
+        ON routine_activities."activityId" = activities.id
+        WHERE routine_activities."routineId" IN (${routineActivitiesId});
+      `);
 
     routines.forEach((routine) => {
       routine.activities = activities.filter(
@@ -206,10 +213,10 @@ async function createRoutine({ creatorId, isPublic, name, goal }) {
       rows: [routine],
     } = await client.query(
       `
-      INSERT INTO routines("creatorId", "isPublic", "name", "goal")
-      VALUES ($1, $2, $3, $4)
-      RETURNING *;
-    `,
+        INSERT INTO routines("creatorId", "isPublic", "name", "goal")
+        VALUES ($1, $2, $3, $4)
+        RETURNING *;
+      `,
       [creatorId, isPublic, name, goal]
     );
     return routine;
@@ -229,11 +236,11 @@ async function updateRoutine({ id, ...fields }) {
       rows: [routine],
     } = await client.query(
       `
-      UPDATE routines
-      SET ${setString}
-      WHERE id = ${id}
-      RETURNING *;
-    `,
+        UPDATE routines
+        SET ${setString}
+        WHERE id = ${id}
+        RETURNING *;
+      `,
       Object.values(fields)
     );
     return routine;
@@ -248,18 +255,18 @@ async function destroyRoutine(id) {
       rows: [routine],
     } = await client.query(
       `
-      DELETE FROM routines
-      WHERE id=$1
-      RETURNING *;
-   `,
+        DELETE FROM routines
+        WHERE id=$1
+        RETURNING *;
+      `,
       [id]
     );
 
     await client.query(
       `
-      DELETE FROM routine_activities
-      WHERE "routineId"=$1;
-   `,
+        DELETE FROM routine_activities
+        WHERE "routineId"=$1;
+      `,
       [id]
     );
     return routine;

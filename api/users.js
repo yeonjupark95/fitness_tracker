@@ -8,9 +8,8 @@ const {
   getUserByUsername,
   getPublicRoutinesByUser,
 } = require("../db");
+
 // POST /users/register
-// Create a new user. Require username and password, and hash password before saving user to DB. Require all passwords to be at least 8 characters long.
-// Throw errors for duplicate username, or password-too-short.
 usersRouter.post("/register", async (req, res, next) => {
   const { username, password } = req.body;
   try {
@@ -60,9 +59,8 @@ usersRouter.post("/login", async (req, res, next) => {
     next(error);
   }
 });
+
 // // GET /users/me (*)
-// // Send back the logged-in user's data if a valid token is supplied in the header.
-// need to be fixed
 usersRouter.get("/me", async (req, res, next) => {
   const prefix = "Bearer ";
   const auth = req.header("Authorization");

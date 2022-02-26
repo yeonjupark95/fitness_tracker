@@ -56,7 +56,8 @@ async function getUser({ username, password }) {
 
 async function getUserById(id) {
     try{
-      const {rows: [user]} = await client.query(`
+      const {rows: [user]} = await client.query(
+      `
         SELECT *
         FROM users
         WHERE id=$1;

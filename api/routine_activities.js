@@ -8,8 +8,8 @@ const {
 } = require("../db/routine_activities");
 const { requireUser } = require("./utils");
 const routines_activitiesRouter = express.Router();
+
 // PATCH /routine_activities/:routineActivityId (**)
-// Update the count or duration on the routine activity
 routines_activitiesRouter.patch(
   "/:routineActivityId",
   requireUser,
@@ -41,7 +41,6 @@ routines_activitiesRouter.patch(
 );
 
 // DELETE /routine_activities/:routineActivityId (**)
-// Remove an activity from a routine, use hard delete
 routines_activitiesRouter.delete(
   "/:routineActivityId",
   requireUser,
